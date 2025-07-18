@@ -47,20 +47,18 @@ if uploaded_file:
     with st.expander("📄 Show Extracted Resume Text"):
         st.text(text)
 
-    # 💡 Ensure the following block is correctly indented INSIDE the `if uploaded_file:` block
-    openai.api_key = st.secrets["openai_api_key"]
+    import streamlit as st
+import google.generativeai as genai
 
-    st.subheader("🤖 Ask the Resume Advisor")
+genai.configure(api_key=st.secrets["gemini_api_key"])
 
-    user_query = st.chat_input("Ask about your resume or job fit...")
+st.subheader("🤖 Ask the Resume Advisor")
 
-    if user_query:
-        with st.spinner("Thinking..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": f"You are a helpful resume advisor. The resume content is:\n{text}"},
-                    {"role": "user", "content": user_query}
-                ]
-            )
-            st.write(response['choices'][0]['message']['content'])
+user_query = st.chat_input("Ask about your resume or job fit...")
+
+if user_query and uploaded_file:
+    with st.spinner("Thinking..."):
+        model = genai.GenerativeModel("gemini-pro")
+        chat = model.start_chat()
+        response = chat.send_message(f"Resume content:\n{text}\n\nUser question: {user_query}")
+        st.write(response.text)
