@@ -16,9 +16,7 @@ def extract_text_from_pdf(uploaded_file):
     reader = PyPDF2.PdfReader(uploaded_file)
     text = ""
     for page in reader.pages:
-        page_text = page.extract_text()
-        if page_text:
-            text += page_text
+        text += page.extract_text()
     return text.lower()
 
 def suggest_jobs(text):
@@ -49,11 +47,11 @@ if uploaded_file:
     with st.expander("📄 Show Extracted Resume Text"):
         st.text(text)
 
-    import openai
-openai.api_key = st.secrets["openai_api_key"]
-
+    # 💡 Ensure the following block is correctly indented INSIDE the `if uploaded_file:` block
+    openai.api_key = st.secrets["openai_api_key"]
 
     st.subheader("🤖 Ask the Resume Advisor")
+
     user_query = st.chat_input("Ask about your resume or job fit...")
 
     if user_query:
