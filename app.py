@@ -49,7 +49,9 @@ if uploaded_file:
     with st.expander("📄 Show Extracted Resume Text"):
         st.text(text)
 
-    openai.api_key = st.secrets["openai_api_key"]
+    import openai
+openai.api_key = st.secrets["openai_api_key"]
+
 
     st.subheader("🤖 Ask the Resume Advisor")
     user_query = st.chat_input("Ask about your resume or job fit...")
