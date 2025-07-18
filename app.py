@@ -1,6 +1,9 @@
 import streamlit as st
 import PyPDF2
-import openai
+import google.generativeai as genai
+
+# Load Gemini API key from Streamlit secrets
+genai.configure(api_key=st.secrets["gemini_api_key"])
 
 st.set_page_config(page_title="Resume Job Matcher", page_icon="📄")
 
@@ -47,18 +50,12 @@ if uploaded_file:
     with st.expander("📄 Show Extracted Resume Text"):
         st.text(text)
 
-    import streamlit as st
-import google.generativeai as genai
+    st.subheader("🤖 Ask the Resume Advisor")
+    user_query = st.chat_input("Ask about your resume or job fit...")
 
-genai.configure(api_key=st.secrets["gemini_api_key"])
-
-st.subheader("🤖 Ask the Resume Advisor")
-
-user_query = st.chat_input("Ask about your resume or job fit...")
-
-if user_query and uploaded_file:
-    with st.spinner("Thinking..."):
-        model = genai.GenerativeModel("gemini-pro")
-        chat = model.start_chat()
-        response = chat.send_message(f"Resume content:\n{text}\n\nUser question: {user_query}")
-        st.write(response.text)
+    if user_query:
+        with st.spinner("Thinking..."):
+            model = genai.GenerativeModel("models/gemini-pro")  # ✅ Correct model name
+            chat = model.start_chat()
+            response = chat.send_message(f"Resume content:\n{text}\n\nUser question: {user_query}")
+            st.write(response.text)
